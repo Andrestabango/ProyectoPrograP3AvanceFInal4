@@ -67,11 +67,15 @@
             private JTextField a00TextField;
             private JTextField AP_valor;
             private JButton AP_entrar_btm;
-            private JButton AP_salir_btm;
             private JSpinner AP_fecha_Spinner;
             private JTextField AP_mes;
             private JTextField AP_anio;
             private JComboBox AP_Parqueadero_cb;
+            private JTextField AP_TOTAL;
+            private JTextField AP_horasReservadas;
+            private JTextField AP_hora_utilizadas;
+            private JButton AP_salir_btm;
+            private JTextField AP_valor_Multa;
 
             private Lista personas = new Lista();
     private ListaParqueadero parqueaderos = new ListaParqueadero();
@@ -609,26 +613,76 @@
             @Override
             public void actionPerformed(ActionEvent e) {
 
-
                 String placa = AP_Placa_TextField.getText();
                 Parqueadero parqueadero1 = sistema.buscarParqueaderoPorLugar(AP_Parqueadero_cb.getSelectedItem().toString());
-
                 List<RegistroParqueo> reservas =  sistema.buscarReservasPorPlaca(parqueadero1.getId(), placa, AP_fecha_Spinner.getValue().toString());
 
-                for (RegistroParqueo reserva : reservas) {
+    if(reservas.size()>0)   {
+    for (RegistroParqueo reserva : reservas) {
 
-                    AP_lugar.setText(String.valueOf(reserva.getEspacio()+1));
-                    AP_piso.setText(String.valueOf(reserva.getPiso()+1));
-                    AP_hora_ingreso.setText(String.valueOf(reserva.getHoraIngreso()));
-                    AP_valor.setText(String.valueOf(reserva.getValorPorHora()));
-                    break;
-                }
+        AP_lugar.setText(String.valueOf(reserva.getEspacio()+1));
+        AP_piso.setText(String.valueOf(reserva.getPiso()+1));
+        AP_hora_ingreso.setText(String.valueOf(reserva.getHoraIngreso()));
+        AP_valor.setText(String.valueOf(reserva.getValorPorHora()));
+        AP_horasReservadas.setText(String.valueOf(reserva.getHorasReservadas()));
+        break;
+    }
+}   else {
 
-                JOptionPane.showMessageDialog(null, "TEST");
+    JOptionPane.showMessageDialog(null, "Placa no posee reserva");
+}
+
+
+
+
 
 
             }
         });
+
+        AP_salir_btm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String placa = AP_Placa_TextField.getText();
+                Parqueadero parqueadero1 = sistema.buscarParqueaderoPorLugar(AP_Parqueadero_cb.getSelectedItem().toString());
+                List<RegistroParqueo> reservas =  sistema.buscarReservasPorPlaca(parqueadero1.getId(), placa, AP_fecha_Spinner.getValue().toString());
+
+                if(reservas.size()>0)   {
+                    for (RegistroParqueo reserva : reservas) {
+
+                        AP_lugar.setText(String.valueOf(reserva.getEspacio()+1));
+                        AP_piso.setText(String.valueOf(reserva.getPiso()+1));
+                        AP_hora_ingreso.setText(String.valueOf(reserva.getHoraIngreso()));
+
+                        AP_horasReservadas.setText(String.valueOf(reserva.getHorasReservadas()));
+                        AP_hora_utilizadas.setText(String.valueOf((Integer.parseInt(AP_hora_salida.getText())-reserva.getHoraIngreso())));
+                        if (Integer.parseInt(AP_hora_utilizadas.getText())>1){
+                            AP_valor.setText(String.valueOf(reserva.getRecargoPorHoraExtra()));
+                            AP_valor_Multa.setText( String.valueOf(reserva.getRecargoPorHoraExtra() * Integer.parseInt(AP_hora_utilizadas.getText())) );
+                            AP_TOTAL.setText(AP_valor_Multa.getText());
+                        }else{
+                            AP_valor.setText(String.valueOf(reserva.getValorPorHora()));
+                            AP_valor_Multa.setText("0");
+                            AP_TOTAL.setText(AP_valor.getText());
+                        }
+
+
+                        break;
+                    }
+                }   else {
+
+                    JOptionPane.showMessageDialog(null, "Placa no posee reserva");
+                }
+
+
+
+
+
+
+            }
+        });
+
     }
 
     private void imprimirDatosReserva(ReservaParqueadero reserva) {
