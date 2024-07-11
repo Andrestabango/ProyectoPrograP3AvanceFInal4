@@ -77,6 +77,8 @@
             private JTextField AP_hora_utilizadas;
             private JButton AP_salir_btm;
             private JTextField AP_valor_Multa;
+            private JButton ordenarEnInordenButton;
+            private JList list3;
 
             private Lista personas = new Lista();
     private ListaParqueadero parqueaderos = new ListaParqueadero();
@@ -107,7 +109,7 @@
                         JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     } else {
-                        if (validarStringLetras(textField1nombreUsuario.getText().trim())) {
+                        if (validarStringLetras(textField1nombreUsuario.getText().trim()) && validarStringPersonalizado(textField1idBanner.getText())) {
                             personas.adicionarElementos(new Persona(textField1nombreUsuario.getText(), textField1idBanner.getText(), comboBox1tipoPersona.getSelectedItem().toString()));
                             JOptionPane.showMessageDialog(null, "Se ha agreagado el usuario correctamente\n" +
                                     "\nNombre: " + textField1nombreUsuario.getText() +
@@ -116,7 +118,7 @@
                             );
                             limpiarDatos();
                         } else {
-                            JOptionPane.showMessageDialog(null, "Ingresar solo letras en el nombre de usuario");
+                            JOptionPane.showMessageDialog(null, "Ingresar los campos correctamente ");
                         }
                     }
                 } catch (Exception ex) {
@@ -377,7 +379,15 @@
                         textField1idUsuarioPlaca.setText(textField2.getText());
                         tabbedPane1.setEnabledAt(tabbedPane1.indexOfComponent(pestanaUsuarios), false);
                         tabbedPane1.setEnabledAt(tabbedPane1.indexOfComponent(pestanaParqueadero), false);
-                        tabbedPane1.setEnabledAt(tabbedPane1.indexOfComponent(pestanaVehiculos), true);
+                        tabbedPane1.setEnabledAt(tabbedPane1.indexOfComponent(pestanaVehiculos), true
+
+
+
+
+
+
+
+                        );
                         tabbedPane1.setSelectedComponent(pestanaVehiculos);
 
                         // Mostrar mensaje de éxito y cargar los datos del usuario en la GUI
@@ -675,6 +685,7 @@
                         }
 
 
+
                         break;
                     }
                 }   else {
@@ -789,6 +800,14 @@
                 }
             }
         });
+        ordenarEnInordenButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                reservasParqueadero.mostrarReservasEnOrdenPorHora();
+                reservasParqueadero.setList3Reserva(list3Reserva);
+                //lle
+            }
+        });
     }
 
     private void imprimirDatosReserva(ReservaParqueadero reserva) {
@@ -809,6 +828,7 @@
         comboParqueaderoReserva.setSelectedIndex(0);
         comboBoxPlacaReserva.setSelectedIndex(0);
     }
+
 
     public void limpiarDatos() {
         textField1nombreUsuario.setText("");
@@ -920,4 +940,11 @@
         frame.pack();
         frame.setVisible(true);
     }
+
+            public static boolean validarStringPersonalizado(String dato) {
+                return dato.matches("A00[0-9]{6}");
+            }
+
+
+
 }
