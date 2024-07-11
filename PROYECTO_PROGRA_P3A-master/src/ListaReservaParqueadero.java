@@ -43,6 +43,9 @@ public class ListaReservaParqueadero {
         }
     }
 
+
+
+
     public void eliminarReserva(String placaVehiculo, String nombrePersona) throws Exception {
         ReservaParqueadero reservaEliminar = null;
         for (ReservaParqueadero reserva : reservas) {
@@ -62,36 +65,19 @@ public class ListaReservaParqueadero {
     }
 
 
-    public void editarReserva(String placaVehiculo, String nombrePersona, int nuevasHorasReserva) throws Exception {
-        Reserva reserva = buscarReserva(placaVehiculo, nombrePersona);
+    public void editarReserva(String placaVehiculo, String nombrePersona, Parqueadero nuevoParqueadero, int nuevaHoraDeReserva, int nuevoDia, int nuevoMes, int nuevoAnio, int nuevaHoraDeIngreso) throws Exception {
+        ReservaParqueadero reserva = (ReservaParqueadero) buscarReserva(placaVehiculo, nombrePersona);
         if (reserva != null) {
-            reserva.setHorasReserva(nuevasHorasReserva);
+            reserva.setDia(nuevoDia);
+            reserva.setMes(nuevoMes);
+            reserva.setAnio(nuevoAnio);
+            reserva.setHoraDeReserva(nuevaHoraDeIngreso);
+            reserva.setParqueadero(nuevoParqueadero);
+            reserva.setTiempoReserva(nuevaHoraDeReserva);
         } else {
-            throw new Exception("No se encontró ninguna reserva para el vehículo con placa " +
-                    placaVehiculo + " y persona " + nombrePersona);
+            throw new Exception("No se encontró ninguna reserva para el vehículo con placa " + placaVehiculo + " y persona " + nombrePersona);
         }
     }
 
-    public double calcularCostoReserva(Reserva reserva) {
-        double costoBase = 0.75; // Costo base por hora
-        return costoBase * reserva.getHorasReserva();
-    }
 
-    public int obtenerPuestosLibres(Parqueadero parqueadero) {
-        return obtenerPuestosLibresRecursivo(parqueadero, 0, 0);
-    }
-
-    private int obtenerPuestosLibresRecursivo(Parqueadero parqueadero, int nivel, int espacio) {
-        if (nivel == parqueadero.getEspacio().getNivel()) {
-            return 0;
-        }
-        if (espacio == parqueadero.getCantidadEspacio()) {
-            return obtenerPuestosLibresRecursivo(parqueadero, nivel + 1, 0);
-        }
-        if (parqueadero.getDisponibilidad()[nivel][espacio]) {
-            return 1 + obtenerPuestosLibresRecursivo(parqueadero, nivel, espacio + 1);
-        } else {
-            return obtenerPuestosLibresRecursivo(parqueadero, nivel, espacio + 1);
-        }
-    }
 }

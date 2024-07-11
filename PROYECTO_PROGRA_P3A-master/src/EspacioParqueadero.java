@@ -32,12 +32,7 @@ public class EspacioParqueadero {
         horarios.reservar(hora); // Marcar hora como no disponible
     }
 
-    public void liberar(String dia, String hora) {
-        this.ocupado = false;
-        this.placaVehiculo = "";
-        Horario horarios = disponibilidadPorDia.get(dia);
-        horarios.liberar(hora); // Marcar hora como disponible
-    }
+
 
     public boolean estaDisponible(String dia, String hora) {
         Horario horarios = disponibilidadPorDia.get(dia);

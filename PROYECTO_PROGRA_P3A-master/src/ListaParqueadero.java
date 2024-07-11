@@ -72,14 +72,7 @@ public class ListaParqueadero {
         }
     }
 
-    public void actualizarDisponibilidad(String nombreParqueadero, int numeracionEspacio, boolean ocupado) throws Exception {
-        Parqueadero parqueadero = buscarParqueadero(nombreParqueadero);
-        if (parqueadero != null) {
-            actualizarEspacio(parqueadero, numeracionEspacio, ocupado);
-        } else {
-            throw new Exception("Parqueadero no encontrado");
-        }
-    }
+
 
     private void actualizarEspacio(Parqueadero parqueadero, int numeracionEspacio, boolean ocupado) throws Exception {
         Espacio espacio = buscarEspacio(parqueadero, numeracionEspacio);
@@ -119,12 +112,5 @@ public class ListaParqueadero {
     }
 
 
-    /*public void actualizarDisponibilidad(String nombreParqueadero, boolean ocupado) throws Exception {
-        Parqueadero parqueadero = buscarParqueadero(nombreParqueadero);
-        if (parqueadero != null) {
-            parqueadero.actualizarEspacios(ocupado);
-        } else {
-            throw new Exception("Parqueadero no encontrado");
-        }
-    }*/
+
 }

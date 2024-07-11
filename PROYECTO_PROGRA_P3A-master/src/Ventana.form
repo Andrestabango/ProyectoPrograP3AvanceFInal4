@@ -75,7 +75,7 @@
               </component>
             </children>
           </grid>
-          <grid id="fe563" binding="pestanaReserva" layout-manager="GridLayoutManager" row-count="10" column-count="13" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="fe563" binding="pestanaReserva" layout-manager="GridLayoutManager" row-count="9" column-count="13" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Reserva"/>
@@ -153,17 +153,9 @@
                   <text value="Eliminar Reserva"/>
                 </properties>
               </component>
-              <component id="b8095" class="javax.swing.JButton" binding="buscarReservaButton" default-binding="true">
-                <constraints>
-                  <grid row="8" column="3" row-span="1" col-span="7" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Buscar Reserva"/>
-                </properties>
-              </component>
               <scrollpane id="a4108">
                 <constraints>
-                  <grid row="9" column="3" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="8" column="3" row-span="1" col-span="7" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>

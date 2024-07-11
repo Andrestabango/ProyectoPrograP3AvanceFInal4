@@ -72,17 +72,7 @@ public class Lista {
     }
 
 
-    public void agregarVehiculoAPersona(String idPersona, Vehiculo vehiculo) throws Exception {
-        if (!validarPlaca(vehiculo.getPlaca())){
-            throw new Exception("LA placa no es valida");
-        }
-        Persona persona = buscarPersona(idPersona);
-        if (persona != null) {
-            persona.addVehiculo(vehiculo);
-        } else {
-            throw new Exception("La persona con el ID " + idPersona + " no está en la lista.");
-        }
-    }
+
     public boolean validarPlaca(String placa){
         String regex = "^[A-Za-z]{3}\\d{4}$";
         return  placa.matches(regex);

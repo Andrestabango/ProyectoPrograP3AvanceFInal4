@@ -1,4 +1,6 @@
         import javax.swing.*;
+        import javax.swing.event.ListSelectionEvent;
+        import javax.swing.event.ListSelectionListener;
         import java.awt.event.ActionEvent;
         import java.awt.event.ActionListener;
         import java.time.LocalDate;
@@ -48,8 +50,7 @@
     private JButton reservarButton;
     private JButton modificarReservaButton;
     private JButton eliminarReservaButton;
-    private JButton buscarReservaButton;
-    private JList list3Reserva;
+            private JList list3Reserva;
     private JTextField textMesReserva;
             private JComboBox comboBoxPlacaReserva;
     private JSpinner spinnerDiasReserva;
@@ -441,6 +442,9 @@
                         return;
                     }
 
+
+
+                    // (int tiempoReserva, int horaDeReserva, int dia, int mes, int anio, Parqueadero parqueadero, Vehiculo vehiculo, Persona persona, int tiempoReserva1, double precio)
                     // Validar fecha y hora
                     LocalDate fechaReserva = LocalDate.of(anio, mes, dia);
                     LocalDate fechaActual = LocalDate.now();
@@ -485,16 +489,18 @@
                     }
 
                     // Asignar espacio en el parqueadero
-                   // Espacio espacioAsignado = parqueadero.asignarEspacioDisponible();
-                   // if (espacioAsignado == null) {
-                   //     JOptionPane.showMessageDialog(null, "No hay espacios disponibles en el parqueadero", "Error", JOptionPane.ERROR_MESSAGE);
-                   //     return;
-                   // }
+                    // Espacio espacioAsignado = parqueadero.asignarEspacioDisponible();
+                    // if (espacioAsignado == null) {
+                    //     JOptionPane.showMessageDialog(null, "No hay espacios disponibles en el parqueadero", "Error", JOptionPane.ERROR_MESSAGE);
+                    //     return;
+                    // }
 
                     // Crear una nueva reserva
                     double precio = horasReserva * 0.75; // Suponiendo un precio fijo por hora
                     ReservaParqueadero nuevaReserva = new ReservaParqueadero(horaDeReserva, horasReserva, dia, mes, anio, parqueadero, vehiculo, persona, horasReserva, precio);
 
+
+                    reservasParqueadero.agregarReserva(nuevaReserva);
                     // Generar la bitácora
                     //nuevaReserva.generarBitacora(7+horasReserva, horasReserva, dia, mes, anio, vehiculo);
                     //System.out.println("Bitácora generada:\n" + nuevaReserva.getParqueadero().getMatricesBitacora().toString());
@@ -523,6 +529,7 @@
 
                     int[] espacioAsignadoDisponible = sistema.agendarEspacioAutomatico(parqueadero1.getId(),String.valueOf(dia), String.valueOf(horaDeReserva), placaVehiculo);
                     if (espacioAsignadoDisponible != null) {
+
 
                         JOptionPane.showMessageDialog(null, "Reserva creada con éxito\n" +
                                 "Fecha: " + dia + "/" + mes + "/" + anio +
@@ -683,6 +690,105 @@
             }
         });
 
+        list3Reserva.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && list3Reserva.getSelectedIndex() != -1) {
+                    int indice = list3Reserva.getSelectedIndex();
+                    ReservaParqueadero reserva = (ReservaParqueadero) list3Reserva.getModel().getElementAt(indice);
+
+                    // Llenar los campos con los datos de la reserva seleccionada
+                    spinnerDiasReserva.setValue(reserva.getDia());
+                    textMesReserva.setText(String.valueOf(reserva.getMes()));
+                    textAnioReserva.setText(String.valueOf(reserva.getAnio()));
+                    comboBoxHorasReserva.setSelectedItem(String.valueOf(reserva.getHoraDeReserva()));
+                    spinnerHorasReserva.setValue(reserva.getTiempoReserva());
+                    comboParqueaderoReserva.setSelectedItem(reserva.getParqueadero().getLugar());
+                    comboBoxPlacaReserva.setSelectedItem(reserva.getVehiculo().getPlaca());
+                    textField1.setText(reserva.getPersona().getNombre());
+                }
+            }
+        });
+
+
+
+
+
+        modificarReservaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    // Obtener los datos de los campos de texto y combobox
+                    String placaVehiculo = comboBoxPlacaReserva.getSelectedItem().toString();
+                    String nombrePersona = textField1.getText();
+                    int nuevaHoraDeReserva = Integer.parseInt(spinnerHorasReserva.getValue().toString());
+                    String nuevoNombreParqueadero = comboParqueaderoReserva.getSelectedItem().toString();
+                    int nuevoDia = Integer.parseInt(spinnerDiasReserva.getValue().toString());
+                    int nuevoMes = Integer.parseInt(textMesReserva.getText());
+                    int nuevoAnio = Integer.parseInt(textAnioReserva.getText());
+                    int nuevaHoraDeIngreso = Integer.parseInt(comboBoxHorasReserva.getSelectedItem().toString());
+
+                    // Validar campos
+                    if (placaVehiculo.isEmpty() || nombrePersona.isEmpty() || nuevoNombreParqueadero.isEmpty() ||
+                            nuevoDia <= 0 || nuevoMes <= 0 || nuevoAnio <= 0 || nuevaHoraDeIngreso <= 0) {
+                        JOptionPane.showMessageDialog(null, "Todos los campos deben ser llenados correctamente", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Buscar el nuevo parqueadero
+                    Parqueadero nuevoParqueadero = parqueaderos.buscarParqueadero(nuevoNombreParqueadero);
+                    if (nuevoParqueadero == null) {
+                        JOptionPane.showMessageDialog(null, "Parqueadero no encontrado", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Editar la reserva
+                    reservasParqueadero.editarReserva(placaVehiculo, nombrePersona, nuevoParqueadero, nuevaHoraDeReserva, nuevoDia, nuevoMes, nuevoAnio, nuevaHoraDeIngreso);
+
+                    // Actualizar el JList de reservas
+                    llenarJlistReserva();
+
+                    JOptionPane.showMessageDialog(null, "Reserva modificada con éxito\n" +
+                            "Vehículo: " + placaVehiculo +
+                            "\nPersona: " + nombrePersona +
+                            "\nNuevo parqueadero: " + nuevoNombreParqueadero +
+                            "\nNueva hora de reserva: " + nuevaHoraDeReserva +
+                            "\nNueva fecha de reserva: " + nuevoDia + "/" + nuevoMes + "/" + nuevoAnio +
+                            "\nNueva hora de ingreso: " + nuevaHoraDeIngreso);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace(); // Imprimir la traza completa de la excepción
+                    JOptionPane.showMessageDialog(null, "Error al modificar la reserva: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        eliminarReservaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Obtener los datos de la reserva seleccionada en la lista visual
+                int indiceSeleccionado = list3Reserva.getSelectedIndex();
+                if (indiceSeleccionado != -1) {
+                    ReservaParqueadero reservaSeleccionada = (ReservaParqueadero) list3Reserva.getModel().getElementAt(indiceSeleccionado);
+
+                    // Obtener los datos necesarios para eliminar la reserva
+                    String placaVehiculo = reservaSeleccionada.getVehiculo().getPlaca();
+                    String nombrePersona = reservaSeleccionada.getPersona().getNombre();
+
+                    try {
+                        // Eliminar la reserva de la lista
+                        reservasParqueadero.eliminarReserva(placaVehiculo, nombrePersona);
+                        llenarJlistReserva();
+                        // Mostrar mensaje de éxito
+                        JOptionPane.showMessageDialog(null, "Reserva eliminada correctamente.");
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error al eliminar reserva", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor selecciona una reserva para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
     }
 
     private void imprimirDatosReserva(ReservaParqueadero reserva) {
@@ -777,7 +883,7 @@
                     Vehiculo vehiculo2 = new Vehiculo("XYZ5678", "Automovil");
                     Vehiculo vehiculo3 = new Vehiculo("LMN9012", "Moto");
                     Vehiculo vehiculo4 = new Vehiculo("JKL3456", "Moto");
-                    Vehiculo vehiculo5 = new Vehiculo("ABC1234","Moto");
+
 
                     // Crear listas de vehículos
                     List<Vehiculo> vehiculos1 = new ArrayList<>();
@@ -788,13 +894,12 @@
                     vehiculos2.add(vehiculo3);
                     vehiculos2.add(vehiculo4);
 
-                    List<Vehiculo> vehiculos3 = new ArrayList<>();
-                    vehiculos3.add(vehiculo5);
+
 
                     // Crear personas
                     Persona persona1 = new Persona("Israel", "A00107465", "Estudiante", vehiculos1);
                     Persona persona2 = new Persona("Guillermo", "A00102030", "Profesor", vehiculos2);
-                    Persona persona3 = new Persona("admin","admin123","Docente",vehiculos3);
+                    Persona persona3 = new Persona("admin","admin123","Docente");
 
                     // Agregar personas a la lista
                     personas.adicionarElementos(persona1);
